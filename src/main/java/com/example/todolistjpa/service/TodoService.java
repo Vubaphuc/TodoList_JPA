@@ -20,10 +20,6 @@ public class TodoService {
     private TodoRepository repository;
 
     public List<Todo> findAllTodos() {
-        List<Todo> todos = repository.findAll();
-        if (todos.isEmpty()) {
-            throw new BadRequestException("Todos List Rỗng");
-        }
         return repository.findAll();
     }
 
@@ -43,7 +39,10 @@ public class TodoService {
     }
 
     public void deleteTodo(Integer id) {
-        repository.deleteById(id);
+        Todo todo = repository.findTodoById(id).orElseThrow(() -> {
+            throw new NotFoundException("Not Found todo with id = " + id);
+        });
+        repository.deleteById(todo.getId());
     }
 
     public Todo updateTodo(Integer id, UpdateTodoRequest request) {
